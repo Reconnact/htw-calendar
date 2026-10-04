@@ -1,0 +1,46 @@
+name: publish
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - run: |
+          printf '%s\n' "$FEEDS" > feeds.txt
+          mkdir public
+          go run . feeds.txt "public/${FEED_NAME:?}.ics"
+        env:
+          FEEDS: ${{ secrets.FEEDS }}
+          FEED_NAME: ${{ secrets.FEED_NAME }}
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+      - id: deploy
+        uses: actions/deploy-pages@v5
+      # GitHub disables a scheduled workflow in a public repo after 60 days without activity; re-enabling resets that clock.
+      - run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/publish.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
