@@ -1,0 +1,13 @@
+{
+  "_": "Die Airfield-Datei: was der TOWER-Client über dieses Repo wissen muss. Keine Hub-Adresse, keine Gerätepfade, keine Geheimnisse. htw-calendar betreibt keinen Dienst: Es läuft als GitHub-Workflow (.github/workflows/publish.yml) bei jedem Push nach main und stündlich. Darum bau_live true, keine Vorschau, kein bau_dev; die Haken tests und laeuft schaltet eine Regel des Airfields ab.",
+  "airfield": "htw-calendar",
+  "repo": "htw-calendar",
+  "name": "htw-calendar",
+  "befehle": {
+    "test": "sh ops/test.sh",
+    "bau_live": "true"
+  },
+  "anleitungen": ["AGENTS.md"],
+  "frei_von_vorgang": [],
+  "kit": "0.6.0"
+}
